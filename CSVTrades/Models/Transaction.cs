@@ -50,15 +50,17 @@ namespace CSVTrades.Models
                 "MoedaEnviadaEmReais: " + MoedaEnviadaEmReais + "\n";
         }
 
+        
         public static decimal ToDecimal(string value)
         {
-            if (value.Contains(','))
+            if (!string.IsNullOrEmpty(value))
             {
-                return decimal.Parse(value);
+               
+                return System.Convert.ToDecimal(value);
             }
             else
             {
-                return 0.0M;
+                return 0.0m;
             }
         }
     }

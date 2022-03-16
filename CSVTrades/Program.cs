@@ -10,7 +10,7 @@ namespace CSVTrades
     public class Program
     {
         
-        public static string csv = string.Format($@"C:\Users\aluno06.TSACBRRJLP046\Downloads\transferoacademy_transações.csv");
+        public static string csv = string.Format($@"C:\Users\gabri\Downloads\transferoacademy_transações(2).csv");
 
         static void Main(string[] args)
         {
@@ -135,34 +135,31 @@ namespace CSVTrades
                
             }
             var csv = new StringBuilder();
-            if (File.Exists(@"C:\Users\aluno06.TSACBRRJLP046\Documents\resultado.csv"))
+            if (File.Exists(@"C:\Users\gabri\Documents\resultado.csv"))
             {
-                File.Delete(@"C:\Users\aluno06.TSACBRRJLP046\Documents\resultado.csv");
+                File.Delete(@"C:\Users\gabri\Documents\resultado.csv");
             }
             
             var listaOrdenada = registros.OrderBy(x => x.Moeda).ToList();
             
             csv.AppendLine(primeiraLinha);
 
-            int contador = 0;
             foreach (var i in listaOrdenada)
             {
               
 
                 
                 var item = i.ToString();
-                // || i.Moeda == "DOGE" || i.Moeda == "USDT" || i.Moeda == "XLM" || i.Moeda == "XRP"
-                if (i.Moeda == "BCH")
+                
+                if (i.Moeda == "BCH" || i.Moeda == "DOGE" || i.Moeda == "USDT" || i.Moeda == "XLM" || i.Moeda == "XRP")
                 {
-                    contador++;
                     var newLine = item;
                     csv.AppendLine(newLine);
                 }
-                if (contador == 21)
-                    return;
+              
 
             }
-            File.WriteAllText(@"C:\Users\aluno06.TSACBRRJLP046\Documents\resultado.csv", csv.ToString());
+            File.WriteAllText(@"C:\Users\gabri\Documents\resultado.csv", csv.ToString());
             
         }
         static List<string> ListaDeMoedas(List<Transaction> list)
