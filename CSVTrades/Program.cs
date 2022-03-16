@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace CSVTrades
 {
     public class Program
     {
-        public static string aluno = "aluno 03";
-        public static string csv = string.Format($@"C:\Users\{aluno}\Downloads\transferoacademy_transações2.csv");
+        
+        public static string csv = string.Format($@"C:\Users\aluno06.TSACBRRJLP046\Downloads\transferoacademy_transações.csv");
 
         static void Main(string[] args)
         {
@@ -62,16 +63,126 @@ namespace CSVTrades
             IEnumerable<Transaction> filtered = list.Where(item => item.Conta.Contains("conta da Binance"));
 
 
-
+            /*
             foreach (Transaction t in filtered)
             {
                 Console.WriteLine(t.ToString());
                 Console.WriteLine(t.MoedaQueSaiu.GetType());
                 Console.WriteLine();
             }
+            */
+
+            HistoricoSaldo(list);
 
             Console.WriteLine("Acabou");
             Console.ReadKey();
+        }
+
+        static void HistoricoSaldo(List<Transaction> list)
+        {
+
+            List<Trade> registros = new List<Trade>();
+            List<string> moedasNaLista = ListaDeMoedas(list);
+            decimal[] saldoFinal = new decimal[moedasNaLista.Count()];
+            string primeiraLinha = "horario;Conta;Moeda;Entrou;Saiu;Saldo";
+            foreach (var item in list)
+            {
+
+
+                switch (item.TipoDeOperacao)
+                {
+                    case "trade":
+                        if (moedasNaLista.IndexOf(item.MoedaQueEntrou) != -1)
+                        {
+                            saldoFinal[moedasNaLista.IndexOf(item.MoedaQueEntrou)] += item.Entrou;
+                            registros.Add(new Trade(item.Horario, item.Conta, item.MoedaQueEntrou, item.Entrou,  0 , saldoFinal[moedasNaLista.IndexOf(item.MoedaQueEntrou)])) ;
+                        }
+
+                        if (moedasNaLista.IndexOf(item.MoedaQueSaiu) != -1)
+                        {
+                            saldoFinal[moedasNaLista.IndexOf(item.MoedaQueSaiu)] -= item.Saiu;
+                            registros.Add(new Trade(item.Horario, item.Conta, item.MoedaQueSaiu, 0, item.Saiu, saldoFinal[moedasNaLista.IndexOf(item.MoedaQueSaiu)]));
+                        }
+
+                        if (moedasNaLista.IndexOf(item.MoedaDeTaxa) != -1)
+                        {
+                            saldoFinal[moedasNaLista.IndexOf(item.MoedaDeTaxa)] -= item.Taxa;
+                            registros.Add(new Trade(item.Horario, item.Conta, item.MoedaDeTaxa, 0, item.Taxa, saldoFinal[moedasNaLista.IndexOf(item.MoedaDeTaxa)]));
+                        }
+                        break;
+
+                    case "deposit":
+                        if (moedasNaLista.IndexOf(item.MoedaQueEntrou) != -1)
+                        {
+                            saldoFinal[moedasNaLista.IndexOf(item.MoedaQueEntrou)] += item.Entrou;
+                            registros.Add(new Trade(item.Horario, item.Conta, item.MoedaQueEntrou, item.Entrou, 0, saldoFinal[moedasNaLista.IndexOf(item.MoedaQueEntrou)]));
+                        }
+                        break;
+
+                    case "withdraw":
+                        if (moedasNaLista.IndexOf(item.MoedaQueSaiu) != -1)
+                        {
+                            saldoFinal[moedasNaLista.IndexOf(item.MoedaQueSaiu)] -= item.Saiu;
+                            registros.Add(new Trade(item.Horario, item.Conta, item.MoedaQueSaiu, 0, item.Saiu, saldoFinal[moedasNaLista.IndexOf(item.MoedaQueSaiu)]));
+                        }
+                        if (moedasNaLista.IndexOf(item.MoedaDeTaxa) != -1)
+                        {
+                            saldoFinal[moedasNaLista.IndexOf(item.MoedaDeTaxa)] -= item.Taxa;
+                            registros.Add(new Trade(item.Horario, item.Conta, item.MoedaDeTaxa, 0, item.Taxa, saldoFinal[moedasNaLista.IndexOf(item.MoedaDeTaxa)]));
+                        }
+                        break;
+                }
+               
+            }
+            var csv = new StringBuilder();
+            if (File.Exists(@"C:\Users\aluno06.TSACBRRJLP046\Documents\resultado.csv"))
+            {
+                File.Delete(@"C:\Users\aluno06.TSACBRRJLP046\Documents\resultado.csv");
+            }
+            
+            var listaOrdenada = registros.OrderBy(x => x.Moeda).ToList();
+            
+            csv.AppendLine(primeiraLinha);
+
+            int contador = 0;
+            foreach (var i in listaOrdenada)
+            {
+              
+
+                
+                var item = i.ToString();
+                // || i.Moeda == "DOGE" || i.Moeda == "USDT" || i.Moeda == "XLM" || i.Moeda == "XRP"
+                if (i.Moeda == "BCH")
+                {
+                    contador++;
+                    var newLine = item;
+                    csv.AppendLine(newLine);
+                }
+                if (contador == 21)
+                    return;
+
+            }
+            File.WriteAllText(@"C:\Users\aluno06.TSACBRRJLP046\Documents\resultado.csv", csv.ToString());
+            
+        }
+        static List<string> ListaDeMoedas(List<Transaction> list)
+        {
+            HashSet<string> moedasNaListaSemRepeticao = new HashSet<string>();
+            List<string> moedasNaLista = new List<string>();
+
+            foreach (var item in list)
+            {
+                if (!string.IsNullOrEmpty(item.MoedaQueEntrou))
+                    moedasNaListaSemRepeticao.Add(item.MoedaQueEntrou);
+
+                if (!string.IsNullOrEmpty(item.MoedaQueSaiu))
+                    moedasNaListaSemRepeticao.Add(item.MoedaQueSaiu);
+
+                if (!string.IsNullOrEmpty(item.MoedaDeTaxa))
+                    moedasNaListaSemRepeticao.Add(item.MoedaDeTaxa);
+            }
+            moedasNaLista = moedasNaListaSemRepeticao.ToList();
+            return moedasNaLista;
         }
     }
 }

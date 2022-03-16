@@ -8,13 +8,13 @@ namespace CSVTrades.Models
         public string Conta { get; private set; }
         public string TipoDeOperacao { get; private set; }
         public string MoedaQueEntrou { get; private set; }
-        public double Entrou { get; private set; }
+        public decimal Entrou { get; private set; }
         public string MoedaQueSaiu { get; private set; }
-        public double Saiu { get; private set; }
+        public decimal Saiu { get; private set; }
         public string MoedaDeTaxa { get; private set; }
-        public double Taxa { get; private set; }
-        public double MoedaRecebidaEmReais { get; private set; }
-        public double MoedaEnviadaEmReais { get; private set; }
+        public decimal Taxa { get; private set; }
+        public decimal MoedaRecebidaEmReais { get; private set; }
+        public decimal MoedaEnviadaEmReais { get; private set; }
 
         public Transaction() { }
 
@@ -26,13 +26,13 @@ namespace CSVTrades.Models
             Conta = conta;
             TipoDeOperacao = tipoDeOperacao;
             MoedaQueEntrou = moedaQueEntrou;
-            Entrou = ToDouble(entrou);
+            Entrou = ToDecimal(entrou);
             MoedaQueSaiu = moedaQueSaiu;
-            Saiu = ToDouble(saiu);
+            Saiu = ToDecimal(saiu);
             MoedaDeTaxa = moedaDeTaxa;
-            Taxa = ToDouble(taxa);
-            MoedaRecebidaEmReais = ToDouble(moedaRecebidaEmReais);
-            MoedaEnviadaEmReais = ToDouble(moedaEnviadaEmReais);
+            Taxa = ToDecimal(taxa);
+            MoedaRecebidaEmReais = ToDecimal(moedaRecebidaEmReais);
+            MoedaEnviadaEmReais = ToDecimal(moedaEnviadaEmReais);
         }
 
         public override string ToString()
@@ -50,15 +50,15 @@ namespace CSVTrades.Models
                 "MoedaEnviadaEmReais: " + MoedaEnviadaEmReais + "\n";
         }
 
-        public static double ToDouble(string value)
+        public static decimal ToDecimal(string value)
         {
-            if (value.Contains(","))
+            if (value.Contains(','))
             {
-                return double.Parse(value, CultureInfo.CreateSpecificCulture("pt-BR"));
+                return decimal.Parse(value);
             }
             else
             {
-                return double.Parse(value);
+                return 0.0M;
             }
         }
     }
