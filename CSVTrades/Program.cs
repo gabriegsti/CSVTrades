@@ -8,11 +8,11 @@ namespace CSVTrades
 {
     public class Program
     {
-        //
-        //public static string aluno = "aluno 03";
-        //public static string csv = string.Format($@"C:\Users\{aluno}\Downloads\transferoacademy_transações2.csv");
+        
+        //public static string aluno = "";
+        public static string csv = string.Format($@"C:\Users\aluno06.TSACBRRJLP046\Downloads\transferoacademy_transações(1).csv");
 
-        public static string csv = string.Format(@"C:\Users\gabri\Documents\transferoacademy_transacoes.csv");
+       // public static string csv = string.Format(@"C:\Users\gabri\Documents\transferoacademy_transacoes.csv");
 
 
 
@@ -68,14 +68,14 @@ namespace CSVTrades
             IEnumerable<Transaction> filtered = list.Where(item => item.Conta.Contains("conta da Binance"));
 
 
-
+            /*
             foreach (Transaction t in filtered)
             {
                 Console.WriteLine(t.ToString());
                 Console.WriteLine(t.MoedaQueSaiu.GetType());
                 Console.WriteLine();
             }
-
+            */
             Console.WriteLine("Acabou");
             Console.ReadKey();
         }
@@ -84,19 +84,20 @@ namespace CSVTrades
         {
             HashSet<string> moedasNaListaSemRepeticao = new HashSet<string>();
             List<string> moedasNaLista = new List<string>();
-            List<decimal> saldoFinal = new List<decimal>();
+           
             foreach (var item in list)
             {
-                if (string.IsNullOrEmpty(item.MoedaQueEntrou))
+                if (!string.IsNullOrEmpty(item.MoedaQueEntrou))
                     moedasNaListaSemRepeticao.Add(item.MoedaQueEntrou);
                 
-                if (string.IsNullOrEmpty(item.MoedaQueSaiu))
+                if (!string.IsNullOrEmpty(item.MoedaQueSaiu))
                     moedasNaListaSemRepeticao.Add(item.MoedaQueSaiu);
 
-                if (string.IsNullOrEmpty(item.MoedaDeTaxa))
+                if (!string.IsNullOrEmpty(item.MoedaDeTaxa))
                     moedasNaListaSemRepeticao.Add(item.MoedaDeTaxa);
             }
             moedasNaLista = moedasNaListaSemRepeticao.ToList();
+            decimal[] saldoFinal = new decimal[moedasNaLista.Count()] ;
             foreach (var item in list)
             {
                 
@@ -125,12 +126,16 @@ namespace CSVTrades
                         Console.WriteLine(item + " : " + saldoFinal[moedasNaLista.IndexOf(item)]);
                         break;
                     case "DOGE":
+                        Console.WriteLine(item + " : " + saldoFinal[moedasNaLista.IndexOf(item)]);
                         break;
                     case "USDT":
+                        Console.WriteLine(item + " : " + saldoFinal[moedasNaLista.IndexOf(item)]);
                         break;
                     case "XLM":
+                        Console.WriteLine(item + " : " + saldoFinal[moedasNaLista.IndexOf(item)]);
                         break;
                     case "XRP":
+                        Console.WriteLine(item + " : " + saldoFinal[moedasNaLista.IndexOf(item)]);
                         break;
 
                 }
